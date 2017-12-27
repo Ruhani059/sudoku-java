@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sudoku.iml" filepath="$PROJECT_DIR$/.idea/modules/sudoku.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sudoku_main.iml" filepath="$PROJECT_DIR$/.idea/modules/sudoku_main.iml" group="sudoku" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sudoku_test.iml" filepath="$PROJECT_DIR$/.idea/modules/sudoku_test.iml" group="sudoku" />
+    </modules>
+  </component>
+</project>
