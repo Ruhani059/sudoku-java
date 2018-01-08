@@ -35,23 +35,47 @@ public class SudokuInputProcess {
         for (int i = 0; i < size; i++) {
             possibleValueVector.addElement(i+1);
         }
-
-        SudokuSolver gameSolver = new SudokuSolver(array, size, possibleValueVector);
-//            SudokuBoard[][] sudokuBoardArray = new SudokuBoard[size][size];
-        gameSolver.board = gameSolver.initailizeSudokuBoard(gameSolver.board);
-//            gameSolver.showValues((gameSolver.board));
-        gameSolver.board = gameSolver.backtracing_search(gameSolver.board);
-//            gameSolver.showValues((gameSolver.board));
-        System.out.println("Variable Selected : "+gameSolver.variableOrdering);
-        System.out.println("Value Selected    : "+gameSolver.valueOrdering);
-
+        if (in.hasNextInt()) {
+            int constraint = in.nextInt();
+            Vector<Integer>large = new Vector<Integer>();
+            Vector<Integer>small = new Vector<Integer>();
+            for (int i = 0; i < constraint; i++) {
+                large.addElement(in.nextInt());
+                small.addElement(in.nextInt());
+            }
+            Agent game = new FutoshikiSolver(array, size, possibleValueVector, small, large);
+            constructGame(game);
+        }
+        else
+        {
+            Agent game = new SudokuSolver(array, size, possibleValueVector );
+            constructGame(game);
+        }
 
     }
-    public static void main(String[] args) throws IOException {
-        new SudokuInputProcess().startGame();
+
+    public static void main(String[] args) {
+
+        /** This segment was used for file name. But in jar, file path can not be specified by this process...
+         * String string;
+         * for(int i=1;i<14;i++)
+         * {
+         *      string = "inputFileSudoku\\input"+Integer.toString(i)+".txt";
+         *      string = "inputFileFutoshiki\\input"+Integer.toString(i)+".txt";
+         *      System.out.println("Processing Input File : "+string);
+         *      processInputFile(string);
+         * }
+         **/
+
+        try {
+            new SudokuInputProcess().getAllFileName();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
-    public void startGame() throws IOException {
+    public void getAllFileName() throws IOException {
         for(int i=1;i<14;i++)
         {
             String inputFileName = "/inputfile/input"+String.valueOf(i)+".txt";
@@ -60,4 +84,36 @@ public class SudokuInputProcess {
             processInputFile(is);
         }
     }
+
+    public static void startGame(Agent game, int variableSelection, int valueSelection){
+        game.board = game.initailizeSudokuBoard(game.board);
+        game.board = game.backtracing_search(game.board,variableSelection,valueSelection);
+        System.out.println("Assignment Completed");
+        game.showValues(game.board);
+        System.out.println(""+game.variableOrdering);
+        System.out.println(""+game.valueOrdering);
+    }
+
+    public static void constructGame(Agent game) {
+    /*
+        final int variableSelection_MinimumRemaingValue = 1;
+        final int variableSelection_Random = 2;
+        final int variableSelection_FirstAvailableVariable = 3;
+        final int variableSelection_DegreeHeuristic = 4;
+        final int valueSelection_LeastConstrainingValue = 1;
+        final int valueSelection_Random = 2;
+        final int valueSelection_FirstAvailableValue = 3;
+    */
+        int variable = 1;
+        int value = 3;
+        startGame(game, variable, value);
+        for (variable = 1; variable <= 4; variable++) {
+            for (value = 1; value <= 3; value++) {
+//                startGame(game, variable, value);
+            }
+        }
+
+    }
+
+
 }
