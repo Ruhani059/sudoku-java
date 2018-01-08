@@ -5,7 +5,7 @@ import java.util.Vector;
 
 public class GameBoard {
     int value;
-    Vector<Integer> possibleValues;
+    Vector<Integer>possibleValues;
 
     public GameBoard(int value) {
         this.value = value;
@@ -31,7 +31,7 @@ public class GameBoard {
         }
     }
 
-    public static GameBoard[][] copy2dArray(GameBoard[][] sudokuBoard, int size)
+    public static GameBoard[][] classGameBoard2DArrayCopy(GameBoard[][] sudokuBoard, int size)
     {
         GameBoard[][] board = new GameBoard[size][size];
         for (int i = 0; i < size; i++) {
@@ -42,7 +42,7 @@ public class GameBoard {
         return board;
     }
 
-    public static GameBoard[][] array2SudokuBoard(int[][] array, int size)
+    public static GameBoard[][] convertIntegerArray2GameBoardClass(int[][] array, int size)
     {
         GameBoard[][] board = new GameBoard[size][size];
         for (int i = 0; i < size; i++) {
@@ -53,7 +53,7 @@ public class GameBoard {
         return board;
     }
 
-    public static GameBoard[][] array2SudokuBoard(int[][] array, int size, Vector<Integer>vector)
+    public static GameBoard[][] convertIntegerArray2GameBoardClass(int[][] array, int size, Vector<Integer>vector)
     {
         GameBoard[][] board = new GameBoard[size][size];
         for (int i = 0; i < size; i++) {
@@ -62,5 +62,17 @@ public class GameBoard {
             }
         }
         return board;
+    }
+
+    public static int compareGameBoard2DArray(GameBoard[][] firstBoard, GameBoard[][] secondBoard)
+    {
+        for (int i = 0; i < firstBoard.length; i++) {
+            for (int j = 0; j < firstBoard[i].length; j++) {
+                if (firstBoard[i][j].value != secondBoard[i][j].value) {
+                    return i*firstBoard.length+j+1;
+                }
+            }
+        }
+        return 0;
     }
 }

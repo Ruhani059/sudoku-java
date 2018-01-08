@@ -5,16 +5,10 @@
  */
 package com.ruhani.sudoku;
 
-import javax.xml.bind.DatatypeConverter;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Scanner;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -78,7 +72,7 @@ public class SudokuInputProcess {
     public void getAllFileName() throws IOException {
         for(int i=1;i<14;i++)
         {
-            String inputFileName = "/inputfile/input"+String.valueOf(i)+".txt";
+            String inputFileName = "/sudokuInputFile/input" +String.valueOf(i)+".txt";
             InputStream is = this.getClass().getResourceAsStream(inputFileName);
             System.out.println("Processing Input File : " + inputFileName);
             processInputFile(is);
@@ -86,34 +80,40 @@ public class SudokuInputProcess {
     }
 
     public static void startGame(Agent game, int variableSelection, int valueSelection){
+//        game.showValues(game.board);
         game.board = game.initailizeSudokuBoard(game.board);
+        System.out.println("Total = "+game.filled);
         game.board = game.backtracing_search(game.board,variableSelection,valueSelection);
         System.out.println("Assignment Completed");
+        System.out.println("Total = "+game.filled);
         game.showValues(game.board);
+//        game.solutionBoard.show();
+//        game.showActualDemo(game.board);
         System.out.println(""+game.variableOrdering);
         System.out.println(""+game.valueOrdering);
     }
 
     public static void constructGame(Agent game) {
     /*
-        final int variableSelection_MinimumRemaingValue = 1;
-        final int variableSelection_Random = 2;
-        final int variableSelection_FirstAvailableVariable = 3;
-        final int variableSelection_DegreeHeuristic = 4;
-        final int valueSelection_LeastConstrainingValue = 1;
-        final int valueSelection_Random = 2;
-        final int valueSelection_FirstAvailableValue = 3;
+        //variable selection method
+        variableSelection_MinimumRemaingValue = 1;
+        variableSelection_Random = 2;
+        variableSelection_FirstAvailableVariable = 3;
+        variableSelection_DegreeHeuristic = 4;
+
+        //value selection methos
+        valueSelection_LeastConstrainingValue = 1;
+        valueSelection_Random = 2;
+        valueSelection_FirstAvailableValue = 3;
     */
         int variable = 1;
-        int value = 3;
+        int value = 1;
         startGame(game, variable, value);
-        for (variable = 1; variable <= 4; variable++) {
+        for (variable = 1; variable <= 3; variable++) {
             for (value = 1; value <= 3; value++) {
 //                startGame(game, variable, value);
             }
         }
-
     }
-
 
 }

@@ -1,10 +1,11 @@
 package com.ruhani.sudoku;
 
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Vector;
 
 public class FutoshikiSolver extends Agent {
-    Vector<Integer> lessThanPosition;
+    Vector<Integer>lessThanPosition;
     Vector<Integer>greaterThanPosition;
 
 
@@ -45,7 +46,7 @@ public class FutoshikiSolver extends Agent {
     @Override
     public boolean isConsistant(GameBoard[][] futoshikiGameBoard, int row, int col, int val) {
         GameBoard[][] tempSudokuGameBoard = new GameBoard[this.size][this.size];
-        tempSudokuGameBoard = GameBoard.copy2dArray(futoshikiGameBoard, this.size);
+        tempSudokuGameBoard = GameBoard.classGameBoard2DArrayCopy(futoshikiGameBoard, this.size);
 
         if (isRowColConsistant(tempSudokuGameBoard, row, col, val)) {
             if (isConstraintConsistant(tempSudokuGameBoard, row, col, val)) {
@@ -57,43 +58,16 @@ public class FutoshikiSolver extends Agent {
 
     public boolean isConstraintConsistant(GameBoard[][] futoshikiGameBoard, int row , int col, int val){
         GameBoard[][] tempSudokuGameBoard = new GameBoard[this.size][this.size];
-        tempSudokuGameBoard = GameBoard.copy2dArray(futoshikiGameBoard, this.size);
+        tempSudokuGameBoard = GameBoard.classGameBoard2DArrayCopy(futoshikiGameBoard, this.size);
 
         return true;
     }
-
-    public int getMaximum(Vector<Integer> vector){
-        int max=0;
-        for (Iterator<Integer> iterator = vector.iterator(); iterator.hasNext();) {
-            Integer next = iterator.next();
-            if (max < next) {
-                max = next;
-            }
-        }
-        return max;
-    }
-
-    public int getMinimum(Vector<Integer> vector){
-        int min=10;
-        for (Iterator<Integer> iterator = vector.iterator(); iterator.hasNext();) {
-            Integer next = iterator.next();
-            if (min > next) {
-                min = next;
-            }
-        }
-        return min;
-    }
-
-    public int getPosition(int row, int col){
-        return row*this.size+col+1;
-    }
-
 
     @Override
     public GameBoard[][] updateGameStates(GameBoard[][] futoshikiGameBoard, int row, int col, int val) {
 //        System.out.println("updateGameStates");
         GameBoard[][] tempFutoshikiGameBoard = new GameBoard[this.size][this.size];
-        tempFutoshikiGameBoard = GameBoard.copy2dArray(futoshikiGameBoard, this.size);
+        tempFutoshikiGameBoard = GameBoard.classGameBoard2DArrayCopy(futoshikiGameBoard, this.size);
 
         tempFutoshikiGameBoard[row][col].value = val;
         for (int i = 0; i < this.size; i++) {   //row
@@ -113,7 +87,7 @@ public class FutoshikiSolver extends Agent {
     public GameBoard[][] futoshikiConstraintUpdates(GameBoard[][] futoshikiGameBoard)
     {
         GameBoard[][] tempFutoshikiGameBoard = new GameBoard[this.size][this.size];
-        tempFutoshikiGameBoard = GameBoard.copy2dArray(futoshikiGameBoard, this.size);
+        tempFutoshikiGameBoard = GameBoard.classGameBoard2DArrayCopy(futoshikiGameBoard, this.size);
 
         for (int index = 0; index < this.greaterThanPosition.size(); index++) {
             int lessPosition = this.lessThanPosition.get(index) -1;
@@ -164,7 +138,7 @@ public class FutoshikiSolver extends Agent {
             row = lessPosition/this.size;
             col = lessPosition%this.size;
 //            System.out.println("["+i+"]["+j+"]>["+row+"]["+col+"]");
-            //
+
             //row,col er value greater than i,j er value   [row][col]<[i][j]
             //so row,col er actual value the 1 porjonto sob delete kore dibo i,j er theke
             if (tempFutoshikiGameBoard[row][col].value !=0) {
@@ -200,4 +174,116 @@ public class FutoshikiSolver extends Agent {
 
         return tempFutoshikiGameBoard;
     }
+
+    @Override
+    public int degreeHeuristic(GameBoard[][] board) {
+        Vector<Integer>minimunRemainingVector = new Vector<Integer>();
+        int minremain = 10;
+        int mrValue = -1;
+        for (int i = 0; i < this.size; i++) {
+            for (int j = 0; j < this.size; j++) {
+                if(board[i][j].value != 0)
+                    continue;
+                int size = board[i][j].possibleValues.size();
+                if(size==0 && board[i][j].value == 0)
+                {
+                    return -1;
+                }
+                if(size>0 && minremain > size)
+                {
+                    minremain = size;
+                    mrValue = getPosition(i, j);
+                }
+            }
+        }
+
+        //for same number of multiple value
+        for (int i = 0; i < this.size; i++) {
+            for (int j = 0; j < this.size; j++) {
+                if(board[i][j].possibleValues.size()== minremain && board[i][j].value==0 )
+                {
+                    minimunRemainingVector.addElement(getPosition(i, j));
+                }
+            }
+        }
+        for (Iterator<Integer> iterator = this.greaterThanPosition.iterator(); iterator.hasNext();) {
+            Integer next = iterator.next();
+            if (minimunRemainingVector.contains(next)) {
+                return next;
+            }
+        }
+        for (Iterator<Integer> iterator = this.lessThanPosition.iterator(); iterator.hasNext();) {
+            Integer next = iterator.next();
+            if (minimunRemainingVector.contains(next)) {
+                return next;
+            }
+        }
+        Random random = new Random();
+        mrValue = minimunRemainingVector.get(random.nextInt(minimunRemainingVector.size()));
+
+        return mrValue;
+    }
+
+    @Override
+    public void showActualDemo(GameBoard[][] board) {
+        char[][] sign = new char[this.size][this.size];
+        for (int i = 0; i < this.size; i++) {
+            for (int j = 0; j < this.size; j++) {
+                sign[i][j] = '0';
+            }
+        }
+
+        for (Iterator<Integer> iterator = this.greaterThanPosition.iterator(); iterator.hasNext();) {
+            Integer great = iterator.next();
+            int less = this.lessThanPosition.get(this.greaterThanPosition.indexOf(great));
+            int lessRow = (less-1)/this.size;
+            int lessCol = (less-1)%this.size;
+            int greatRow = (great-1)/this.size;
+            int greatCol = (great-1)%this.size;
+            if(great-less==1)
+            {
+                sign[lessRow][lessCol] = '<';
+            }
+            else if (great-less == -1) {
+                sign[greatRow][greatCol] = '>';
+            }
+            else if (great-less == -9) {
+                sign[greatRow][greatCol] = '\\';
+            }
+            else if (great-less == 9) {
+                sign[lessRow][lessCol] = '/';
+            }
+
+        }
+
+        for (int i = 0; i < this.size; i++) {
+            System.out.print("____");
+        }
+        System.out.println("_");
+        for (int i = 0; i < this.size; i++) {
+            for (int j = 0; j < this.size; j++) {
+//                if(sign[i][j]=='0' || j==0) System.out.print("| ");
+                if(board[i][j].value!=0)
+                    System.out.print(board[i][j].value+" ");
+                else System.out.print("  ");
+                if (sign[i][j]=='<') System.out.print("< ");
+                else if (sign[i][j]=='>') System.out.print("> ");
+                else System.out.print("  ");
+            }
+            System.out.println("");
+//            System.out.println("|");
+            for (int j = 0; j < this.size; j++) {
+                if (sign[i][j]=='/') System.out.print("/\\__");
+                else if (sign[i][j]=='\\') System.out.print("\\/__");
+                else System.out.print("____");
+            }
+            System.out.println("");
+        }
+        for (int i = 0; i < this.size; i++) {
+            System.out.print("____");
+        }
+        System.out.println("_");
+
+    }
+
 }

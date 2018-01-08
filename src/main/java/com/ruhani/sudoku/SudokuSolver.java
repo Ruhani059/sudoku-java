@@ -30,7 +30,7 @@ public class SudokuSolver extends Agent {
     @Override
     public boolean isConsistant(GameBoard[][] sudokuGameBoard, int row , int col, int val){
         GameBoard[][] tempSudokuGameBoard = new GameBoard[this.size][this.size];
-        tempSudokuGameBoard = GameBoard.copy2dArray(sudokuGameBoard, this.size);
+        tempSudokuGameBoard = GameBoard.classGameBoard2DArrayCopy(sudokuGameBoard, this.size);
 
         if (isRowColConsistant(tempSudokuGameBoard, row, col, val)) {
             if (isBlockConsistant(tempSudokuGameBoard, row, col, val)) {
@@ -43,7 +43,7 @@ public class SudokuSolver extends Agent {
 
     public boolean isBlockConsistant(GameBoard[][] sudokuGameBoard, int row , int col, int val){
         GameBoard[][] tempSudokuGameBoard = new GameBoard[this.size][this.size];
-        tempSudokuGameBoard = GameBoard.copy2dArray(sudokuGameBoard, this.size);
+        tempSudokuGameBoard = GameBoard.classGameBoard2DArrayCopy(sudokuGameBoard, this.size);
 
         int startRow = row - row%3;
         int startCol = col - col%3;
@@ -65,7 +65,7 @@ public class SudokuSolver extends Agent {
     public GameBoard[][] updateGameStates(GameBoard[][] sudokuGameBoard, int row, int col, int val)
     {
         GameBoard[][] tempSudokuGameBoard = new GameBoard[this.size][this.size];
-        tempSudokuGameBoard = GameBoard.copy2dArray(sudokuGameBoard, this.size);
+        tempSudokuGameBoard = GameBoard.classGameBoard2DArrayCopy(sudokuGameBoard, this.size);
 
         tempSudokuGameBoard[row][col].value = val;
         for (int i = 0; i < this.size; i++) {   //row
@@ -90,5 +90,36 @@ public class SudokuSolver extends Agent {
 
         return tempSudokuGameBoard;
 
+    }
+
+    @Override
+    public void showActualDemo(GameBoard[][] board) {
+        for (int i = 1; i < this.size; i++) {
+            System.out.print("___");
+        }
+        System.out.println("_");
+        for (int i = 0; i < this.size; i++) {
+            for (int j = 0; j < this.size; j++) {
+                if (j%3==0) {
+                    System.out.print("| ");
+                }
+                if(board[i][j].value!=0)
+                    System.out.print(board[i][j].value+" ");
+                else System.out.print("  ");
+            }
+            System.out.println("|");
+            if(i==this.size-1)  continue;
+            if(i%3==2){
+                System.out.print(" ");
+                for (int k = 0; k < this.size/3; k++) {
+                    System.out.print("_______ ");
+                }
+                System.out.println("");
+            }
+        }
+        for (int i = 1; i < this.size; i++) {
+            System.out.print("___");
+        }
+        System.out.println("_");
     }
 }
